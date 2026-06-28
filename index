@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 45 20% 95%;
+    --card: 220 15% 8%;
+    --card-foreground: 45 20% 95%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 45 20% 95%;
+    --primary: 43 80% 55%;
+    --primary-foreground: 220 20% 4%;
+    --secondary: 210 30% 12%;
+    --secondary-foreground: 45 20% 90%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 210 60% 45%;
+    --accent-foreground: 45 20% 95%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 43 80% 55%;
+    --chart-1: 43 80% 55%;
+    --chart-2: 210 60% 45%;
+    --chart-3: 0 70% 50%;
+    --chart-4: 150 50% 40%;
+    --chart-5: 280 60% 50%;
+    --radius: 0.5rem;
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --sidebar-background: 220 15% 6%;
+    --sidebar-foreground: 45 20% 90%;
+    --sidebar-primary: 43 80% 55%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 210 30% 12%;
+    --sidebar-accent-foreground: 45 20% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 43 80% 55%;
+  }
+
+  .dark {
+    --background: 220 20% 4%;
+    --foreground: 45 20% 95%;
+    --card: 220 15% 8%;
+    --card-foreground: 45 20% 95%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 45 20% 95%;
+    --primary: 43 80% 55%;
+    --primary-foreground: 220 20% 4%;
+    --secondary: 210 30% 12%;
+    --secondary-foreground: 45 20% 90%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 210 60% 45%;
+    --accent-foreground: 45 20% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 43 80% 55%;
+    --chart-1: 43 80% 55%;
+    --chart-2: 210 60% 45%;
+    --chart-3: 0 70% 50%;
+    --chart-4: 150 50% 40%;
+    --chart-5: 280 60% 50%;
+    --sidebar-background: 220 15% 6%;
+    --sidebar-foreground: 45 20% 90%;
+    --sidebar-primary: 43 80% 55%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 210 30% 12%;
+    --sidebar-accent-foreground: 45 20% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 43 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 95% 0); transform: translateX(0); }
+  20% { clip-path: inset(30% 0 40% 0); transform: translateX(-5px); }
+  40% { clip-path: inset(60% 0 10% 0); transform: translateX(5px); }
+  60% { clip-path: inset(10% 0 70% 0); transform: translateX(-3px); }
+  80% { clip-path: inset(80% 0 5% 0); transform: translateX(3px); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  5% { opacity: 0.8; }
+  10% { opacity: 1; }
+  15% { opacity: 0.6; }
+  20% { opacity: 1; }
+  50% { opacity: 1; }
+  52% { opacity: 0.9; }
+  54% { opacity: 1; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-scanline {
+  animation: scanline 4s linear infinite;
+}
+
+.animate-glitch {
+  animation: glitch-1 0.3s ease-in-out;
+}
+
+.animate-flicker {
+  animation: flicker 3s ease-in-out infinite;
+}
