@@ -1,0 +1,221 @@
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import GlitchText from "./GlitchText";
+
+// Real video thumbnails
+const SCENES = [
+  {
+    img: "https://i.ytimg.com/vi/A6nkxK-LtG4/maxres2.jpg",
+    source: "TyC Sports • 546.341 vistas",
+    headline: '"EN ESPAÑOL POR FAVOR" — VINICIUS JR. EN CONFERENCIA FIFA',
+  },
+  {
+    img: "https://i.ytimg.com/vi/feHbpc1wC_4/maxres2.jpg",
+    source: "TNT Sports México • 118.219 vistas",
+    headline: "¡NO DEJARON HABLAR ESPAÑOL A FRENKIE DE JONG!",
+  },
+  {
+    img: "https://editorial.aristeguinoticias.com/wp-content/uploads/2026/06/vinicius-jr-prohiben-espanol-jugadores-mundial-2026-fifa-14062026-700x467.jpg",
+    source: "Aristegui Noticias • 14 Jun 2026",
+    headline: "VINÍCIUS JR. SE PONE LOS AUDÍFONOS — Y PIERDE LA BATALLA",
+  },
+  {
+    img: "https://editorial.aristeguinoticias.com/wp-content/uploads/2026/06/achraf-hakimi-prohiben-espanol-jugadores-mundial-2026-fifa-14062026-700x491.jpg",
+    source: "AFP / Aristegui Noticias",
+    headline: "HAKIMI NACIÓ EN MADRID. LA FIFA LO OBLIGÓ A CALLAR EN ESPAÑOL.",
+  },
+  {
+    img: "https://editorial.aristeguinoticias.com/wp-content/uploads/2026/06/frenkie-de-jong-prohiben-espanol-jugadores-mundial-2026-fifa-14062026-700x470.jpg",
+    source: "AFP / Aristegui Noticias",
+    headline: '"NO ME IMPORTA" — DE JONG, ANTES DE SER INTERRUMPIDO',
+  },
+  {
+    img: "https://i.ytimg.com/vi/rht4Heu-7fg/maxresdefault.jpg",
+    source: "La Afición / Milenio • 20.483 vistas",
+    headline: "194 MILLONES DE HISPANOHABLANTES. UN MUNDIAL. CERO TRADUCTORES.",
+  },
+  {
+    img: "https://i.ytimg.com/vi/xAlKcvplFUY/maxres2.jpg",
+    source: "TNT Sports México • 38.496 vistas",
+    headline: "FIFA: SOLO 3 IDIOMAS. ESPAÑOL NO INCLUIDO.",
+  },
+  {
+    img: "https://i.ytimg.com/vi/wovLuFYfXKs/maxresdefault.jpg",
+    source: "diegobonti • 390.050 vistas",
+    headline: "LA FIFA SE RINDE: ESPAÑOL HABILITADO EN TODAS LAS CONFERENCIAS",
+  },
+];
+
+const IMPACT_PHRASES = [
+  "PODER GLOBAL",
+  "SOBERANÍA EN TENSIÓN",
+  "LENGUAJE E IDENTIDAD",
+  '"NO SE PUEDE"',
+  "FIFA 2026",
+];
+
+export default function CinematicIntro({ onComplete }) {
+  const [currentScene, setCurrentScene] = useState(0);
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+  const [phase, setPhase] = useState("scenes");
+
+  useEffect(() => {
+    if (phase !== "scenes") return;
+    const interval = setInterval(() => {
+      setCurrentScene((prev) => {
+        if (prev >= SCENES.length - 1) {
+          setPhase("phrases");
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 850);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "phrases") return;
+    const interval = setInterval(() => {
+      setCurrentPhrase((prev) => {
+        if (prev >= IMPACT_PHRASES.length - 1) {
+          setTimeout(() => onComplete(), 800);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 950);
+    return () => clearInterval(interval);
+  }, [phase, onComplete]);
+
+  const scene = SCENES[currentScene];
+
+  return (
+    <div className="fixed inset-0 bg-black z-40 overflow-hidden">
+      {/* Background scene - fast cuts */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentScene}
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 0.6, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="absolute inset-0"
+        >
+          <img
+            src={scene.img}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ filter: "contrast(1.3) saturate(0.65) brightness(0.85)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/10" />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Horizontal glitch bars */}
+      {[15, 55, 80].map((top, i) => (
+        <motion.div
+          key={i}
+          className="absolute left-0 right-0 bg-white/[0.03] pointer-events-none"
+          style={{ top: `${top}%`, height: `${(i + 1) * 3}px` }}
+          animate={{ x: [0, -6, 5, -2, 0], opacity: [0, 1, 0] }}
+          transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 0.8 + i * 0.3 }}
+        />
+      ))}
+
+      {/* Moving scan line */}
+      <motion.div
+        className="absolute left-0 right-0 h-[1px] bg-primary/30 pointer-events-none"
+        animate={{ top: ["-1%", "101%"] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* Top bar */}
+      <div className="absolute top-0 left-0 right-0 h-[3px] bg-red-600/80 z-20" />
+
+      {/* REC */}
+      <div className="absolute top-5 left-5 z-30 flex items-center gap-2">
+        <motion.div
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+          className="w-2 h-2 bg-red-500 rounded-full"
+        />
+        <span className="font-mono text-[10px] text-red-400 tracking-[0.2em]">REC</span>
+      </div>
+
+      {/* Scene counter */}
+      {phase === "scenes" && (
+        <div className="absolute top-5 right-5 z-30">
+          <span className="font-mono text-[10px] text-white/25 tracking-[0.25em]">
+            {String(currentScene + 1).padStart(2, "0")} / {String(SCENES.length).padStart(2, "0")}
+          </span>
+        </div>
+      )}
+
+      {/* Breaking headline bar */}
+      {phase === "scenes" && (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`headline-${currentScene}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="absolute bottom-14 left-0 right-0 z-30 px-5"
+          >
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-red-600 px-3 py-[3px]">
+                  <span className="font-heading text-white text-[10px] tracking-[0.25em]">
+                    BREAKING
+                  </span>
+                </div>
+                <span className="font-mono text-[10px] text-white/35 tracking-wider">
+                  {scene.source}
+                </span>
+              </div>
+              <p className="font-heading text-lg md:text-2xl text-white tracking-wide leading-tight">
+                {scene.headline}
+              </p>
+              <motion.div
+                key={`bar-${currentScene}`}
+                initial={{ scaleX: 0, originX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.82, ease: "linear" }}
+                className="h-[2px] bg-red-500/70 mt-2"
+              />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {/* Impact phrases */}
+      {phase === "phrases" && (
+        <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/70">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPhrase}
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 1.15 }}
+              transition={{ duration: 0.22 }}
+              className="text-center px-6"
+            >
+              <GlitchText
+                text={IMPACT_PHRASES[currentPhrase]}
+                className="font-heading text-5xl md:text-8xl text-white tracking-[0.12em]"
+              />
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5 }}
+                className="h-[2px] bg-primary mt-3 max-w-xs mx-auto"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent z-20 pointer-events-none" />
+    </div>
+  );
+}
