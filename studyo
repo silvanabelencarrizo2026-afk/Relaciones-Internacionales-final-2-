@@ -1,0 +1,162 @@
+import { motion } from "framer-motion";
+import { Mic, Radio, Globe, BookOpen } from "lucide-react";
+
+const STUDIO_IMG = "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/2c19f08b5_generated_image.png";
+
+const dialogues = [
+  {
+    speaker: "EUGENIA AGUIRRE",
+    role: "Conductora",
+    text: "Bienvenidos a Voces del Mundo, un espacio donde analizamos los principales fenómenos de las Relaciones Internacionales contemporáneas.",
+    delay: 0.2,
+  },
+  {
+    speaker: "EUGENIA AGUIRRE",
+    role: "Conductora",
+    text: "En esta oportunidad presentamos un análisis del Mundial de Fútbol 2026 y el rol de la FIFA como actor global en el sistema internacional.",
+    delay: 0.6,
+  },
+  {
+    speaker: "EUGENIA AGUIRRE",
+    role: "Conductora",
+    text: "Este trabajo constituye una presentación académica para la cátedra de Relaciones Laborales del Profesorado Secundario en Ciencias Políticas del Instituto Superior de Formación y Capacitación Docente Nº 1, bajo la orientación de la profesora Emilce Rodríguez.",
+    delay: 1.0,
+  },
+  {
+    speaker: "EUGENIA AGUIRRE",
+    role: "Conductora",
+    text: "Nos acompaña la analista Silvana Carrizo, quien profundizará este análisis desde el Derecho Internacional y las teorías de Relaciones Internacionales.",
+    delay: 1.4,
+  },
+];
+
+export default function StudioSection() {
+  return (
+    <section className="relative min-h-screen bg-background overflow-hidden">
+      {/* Background studio image */}
+      <div className="absolute inset-0">
+        <img
+          src={STUDIO_IMG}
+          alt="Estudio"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-background/95 to-background" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-20">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Radio className="w-5 h-5 text-red-500 animate-pulse" />
+            <span className="font-mono text-xs text-red-400 tracking-[0.3em] uppercase">
+              En vivo desde el estudio
+            </span>
+          </div>
+          <h2 className="font-heading text-4xl md:text-6xl text-white tracking-[0.15em] mb-3">
+            EN EL ESTUDIO
+          </h2>
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent max-w-xs mx-auto" />
+        </motion.div>
+
+        {/* Topic card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-secondary/50 border border-border/50 rounded-lg p-6 md:p-8 mb-12 backdrop-blur-sm"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Globe className="w-5 h-5 text-primary" />
+            <span className="font-mono text-xs text-primary tracking-[0.2em] uppercase">
+              Tema del episodio
+            </span>
+          </div>
+          <h3 className="font-heading text-2xl md:text-4xl text-white tracking-wider mb-2">
+            FIFA 2026 — PODER, DERECHO E IDENTIDAD
+          </h3>
+          <p className="text-muted-foreground text-sm md:text-base">
+            Un análisis del Mundial de Fútbol como fenómeno geopolítico contemporáneo
+          </p>
+        </motion.div>
+
+        {/* Dialogue cards */}
+        <div className="space-y-6">
+          {dialogues.map((dialogue, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: dialogue.delay }}
+              className="flex gap-4 md:gap-6"
+            >
+              {/* Avatar / icon */}
+              <div className="flex-shrink-0 mt-1">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary border border-border/50 flex items-center justify-center">
+                  <Mic className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="font-heading text-sm md:text-base text-primary tracking-wider">
+                    {dialogue.speaker}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {dialogue.role}
+                  </span>
+                </div>
+                <p className="text-white/80 text-sm md:text-base leading-relaxed font-body">
+                  "{dialogue.text}"
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Academic context */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mt-16 border-t border-border/30 pt-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <BookOpen className="w-4 h-4 text-muted-foreground" />
+            <span className="font-mono text-xs text-muted-foreground tracking-[0.15em] uppercase">
+              Marco institucional
+            </span>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-muted/30 rounded-lg p-5 border border-border/20">
+              <p className="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wider">Cátedra</p>
+              <p className="text-white/80 text-sm">Relaciones Laborales</p>
+            </div>
+            <div className="bg-muted/30 rounded-lg p-5 border border-border/20">
+              <p className="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wider">Carrera</p>
+              <p className="text-white/80 text-sm">Profesorado Secundario en Ciencias Políticas</p>
+            </div>
+            <div className="bg-muted/30 rounded-lg p-5 border border-border/20">
+              <p className="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wider">Institución</p>
+              <p className="text-white/80 text-sm">Instituto Superior de Formación y Capacitación Docente Nº 1</p>
+            </div>
+            <div className="bg-muted/30 rounded-lg p-5 border border-border/20">
+              <p className="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wider">Profesora</p>
+              <p className="text-white/80 text-sm">Emilce Rodríguez</p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
