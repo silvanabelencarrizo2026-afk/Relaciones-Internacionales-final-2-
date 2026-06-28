@@ -1,0 +1,87 @@
+import { motion } from "framer-motion";
+import { Mic2, Scale } from "lucide-react";
+
+const team = [
+  {
+    name: "Eugenia Aguirre",
+    role: "Conductora",
+    description: "Presenta y conduce el programa, guiando el análisis de los fenómenos de Relaciones Internacionales contemporáneas.",
+    icon: Mic2,
+  },
+  {
+    name: "Silvana Carrizo",
+    role: "Analista",
+    description: "Profundiza el análisis desde el Derecho Internacional y las teorías de Relaciones Internacionales.",
+    icon: Scale,
+  },
+];
+
+export default function TeamSection() {
+  return (
+    <section className="relative py-20 bg-background overflow-hidden">
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: "linear-gradient(hsl(43 80% 55%) 1px, transparent 1px), linear-gradient(90deg, hsl(43 80% 55%) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-4 block">
+            Equipo
+          </span>
+          <h2 className="font-heading text-4xl md:text-5xl text-white tracking-[0.15em]">
+            PRESENTADORAS
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {team.map((member, index) => {
+            const Icon = member.icon;
+            return (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="group relative"
+              >
+                <div className="bg-card border border-border/40 rounded-xl p-8 transition-all duration-500 hover:border-primary/30 hover:bg-card/80">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+
+                  {/* Name & role */}
+                  <h3 className="font-heading text-2xl text-white tracking-wider mb-1">
+                    {member.name.toUpperCase()}
+                  </h3>
+                  <p className="text-primary text-sm font-mono tracking-wider uppercase mb-4">
+                    {member.role}
+                  </p>
+
+                  {/* Description */}
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {member.description}
+                  </p>
+
+                  {/* Accent line */}
+                  <div className="mt-6 h-[1px] bg-gradient-to-r from-primary/40 to-transparent" />
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
