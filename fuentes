@@ -1,0 +1,106 @@
+import { motion } from "framer-motion";
+import { ExternalLink, Play } from "lucide-react";
+
+const fuentes = [
+  {
+    titulo: "FIFA prohíbe a prensa y jugadores hablar español",
+    canal: "YouTube Shorts",
+    url: "https://youtube.com/shorts/Lg49eaQdrqc",
+    tag: "SHORT VIRAL",
+    tagColor: "bg-red-600",
+    thumb: "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/5f0ab55ff_generated_image.png",
+  },
+  {
+    titulo: "¿No se puede hablar español en la Copa Mundial 2026?",
+    canal: "Expansión Video • 4,964 vistas",
+    url: "https://youtu.be/nq8IT5hBO2w",
+    tag: "FUENTE PRINCIPAL",
+    tagColor: "bg-primary text-primary-foreground",
+    thumb: "https://i.ytimg.com/vi/nq8IT5hBO2w/maxresdefault.jpg",
+    descripcion: "FIFA rectifica y permite el uso del español tras la polémica con Vinicius Júnior y la presión de México.",
+  },
+  {
+    titulo: "FIFA sparks controversy by restricting Spanish in 2026 World Cup press conferences",
+    canal: "SDPNoticias • 10,460 vistas",
+    url: "https://youtu.be/dVbu5D8qOio",
+    tag: "COBERTURA INTERNACIONAL",
+    tagColor: "bg-accent",
+    thumb: "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/3400b4f92_generated_image.png",
+    descripcion: "Cobertura internacional de la polémica. La FIFA enfrenta críticas tras prohibir el español en ceremonias oficiales.",
+  },
+];
+
+export default function FuentesSection() {
+  return (
+    <section className="relative py-20 bg-black overflow-hidden">
+      <div className="max-w-5xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-12"
+        >
+          <span className="font-mono text-xs text-muted-foreground tracking-[0.3em] uppercase block mb-3">
+            Material de análisis
+          </span>
+          <h2 className="font-heading text-4xl md:text-5xl text-white tracking-[0.1em]">
+            FUENTES DEL CASO
+          </h2>
+          <div className="h-[1px] bg-gradient-to-r from-primary/40 to-transparent mt-4 max-w-xs" />
+        </motion.div>
+
+        <div className="space-y-5">
+          {fuentes.map((fuente, index) => (
+            <motion.a
+              key={index}
+              href={fuente.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className="group flex gap-4 md:gap-6 bg-card border border-border/30 rounded-xl p-4 md:p-5 hover:border-primary/30 hover:bg-card/80 transition-all duration-300 cursor-pointer"
+            >
+              {/* Thumbnail */}
+              <div className="relative flex-shrink-0 w-24 md:w-36 h-16 md:h-24 rounded-lg overflow-hidden">
+                <img
+                  src={fuente.thumb}
+                  alt=""
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{ filter: "contrast(1.1) saturate(0.8)" }}
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Play className="w-6 h-6 text-white fill-white" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className={`${fuente.tagColor} px-2 py-0.5 text-xs font-mono tracking-wider text-white`}>
+                    {fuente.tag}
+                  </span>
+                </div>
+                <h3 className="font-heading text-sm md:text-lg text-white tracking-wide leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                  {fuente.titulo}
+                </h3>
+                <p className="font-mono text-xs text-muted-foreground">{fuente.canal}</p>
+                {fuente.descripcion && (
+                  <p className="text-xs text-white/40 mt-1.5 leading-relaxed hidden md:block line-clamp-2">
+                    {fuente.descripcion}
+                  </p>
+                )}
+              </div>
+
+              {/* Arrow */}
+              <div className="flex-shrink-0 flex items-center">
+                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
