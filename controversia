@@ -1,0 +1,161 @@
+import { motion } from "framer-motion";
+import { AlertTriangle, Quote } from "lucide-react";
+
+const THUMBNAIL_1 = "https://i.ytimg.com/vi/nq8IT5hBO2w/maxresdefault.jpg";
+
+const timeline = [
+  {
+    fecha: "Copa Mundial 2026 — Fase de grupos",
+    evento: "En conferencia previa al partido Brasil vs Marruecos, un periodista hace su pregunta en inglés a Vinicius Júnior.",
+    tension: false,
+  },
+  {
+    fecha: "El momento",
+    evento: "Vinicius lo detiene y le pide que hable en español. La respuesta no viene del jugador... viene de la FIFA: \"No se puede.\"",
+    tension: true,
+  },
+  {
+    fecha: "La norma FIFA",
+    evento: "Solo se permiten tres idiomas: los de los equipos que juegan y el inglés. El español, aunque es el idioma oficial de México y uno de los más hablados en EE.UU., no estaba contemplado.",
+    tension: false,
+  },
+  {
+    fecha: "La reacción global",
+    evento: "Figuras como Hakimi y Frenkie de Jong también dominan el español pero no podían usarlo. Estalla la crítica. México recibirá 13 partidos. 8 de 48 selecciones hablan español.",
+    tension: true,
+  },
+  {
+    fecha: "La rectificación",
+    evento: "Días después, bajo presión internacional, la FIFA confirma que el español se integra como cuarto idioma oficial en todas las conferencias de prensa del Mundial 2026.",
+    tension: false,
+  },
+];
+
+export default function ControversiaSection() {
+  return (
+    <section className="relative py-24 bg-background overflow-hidden">
+      {/* Subtle bg texture */}
+      <div
+        className="absolute inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(90deg, hsl(43 80% 55%) 0px, hsl(43 80% 55%) 1px, transparent 1px, transparent 60px), repeating-linear-gradient(0deg, hsl(43 80% 55%) 0px, hsl(43 80% 55%) 1px, transparent 1px, transparent 60px)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <AlertTriangle className="w-4 h-4 text-red-500" />
+            <span className="font-mono text-xs text-red-400 tracking-[0.25em] uppercase">
+              La controversia — Reconstrucción
+            </span>
+          </div>
+          <h2 className="font-heading text-4xl md:text-6xl text-white tracking-[0.1em]">
+            EL CASO QUE<br />
+            <span className="text-primary">SACUDIÓ AL MUNDO</span>
+          </h2>
+        </motion.div>
+
+        {/* Video thumbnail card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="mb-16 rounded-xl overflow-hidden border border-border/30 relative group"
+        >
+          <img
+            src={THUMBNAIL_1}
+            alt="¿No se puede hablar español en la Copa Mundial 2026?"
+            className="w-full object-cover max-h-72 md:max-h-96"
+            style={{ filter: "contrast(1.1) saturate(0.85)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+          {/* Source tag */}
+          <div className="absolute top-4 left-4 bg-red-600/90 px-3 py-1">
+            <span className="font-heading text-white text-xs tracking-wider">
+              EXPANSIÓN • 20 JUN 2026
+            </span>
+          </div>
+          {/* Title overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <p className="font-heading text-xl md:text-3xl text-white tracking-wider">
+              ¿NO SE PUEDE HABLAR ESPAÑOL EN LA COPA MUNDIAL 2026?
+            </p>
+            <p className="font-mono text-xs text-white/40 mt-1">
+              4,964 vistas • 206 likes • Expansión Video
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Pull quote */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="mb-16 border-l-2 border-primary pl-6 py-2"
+        >
+          <Quote className="w-5 h-5 text-primary mb-3" />
+          <p className="font-display italic text-xl md:text-2xl text-white/80 leading-relaxed">
+            "Vinicius se puso los audífonos y siguió la dinámica, pero el momento
+            no pasó desapercibido porque no fue el único."
+          </p>
+          <p className="font-mono text-xs text-muted-foreground mt-3 tracking-wider uppercase">
+            — Expansión Video, transcripción oficial
+          </p>
+        </motion.div>
+
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-4 md:left-6 top-0 bottom-0 w-[1px] bg-border/30" />
+
+          <div className="space-y-8">
+            {timeline.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative flex gap-6 md:gap-10 pl-12 md:pl-16"
+              >
+                {/* Dot */}
+                <div
+                  className={`absolute left-[13px] md:left-[21px] top-1.5 w-3 h-3 rounded-full border-2 ${
+                    item.tension
+                      ? "border-red-500 bg-red-500/20"
+                      : "border-primary bg-primary/20"
+                  }`}
+                />
+
+                <div className="flex-1">
+                  <p
+                    className={`font-mono text-xs tracking-wider uppercase mb-2 ${
+                      item.tension ? "text-red-400" : "text-primary"
+                    }`}
+                  >
+                    {item.fecha}
+                  </p>
+                  <p
+                    className={`text-sm md:text-base leading-relaxed ${
+                      item.tension ? "text-white/90" : "text-white/70"
+                    }`}
+                  >
+                    {item.evento}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
