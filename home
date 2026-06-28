@@ -1,0 +1,206 @@
+import { useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Download, Loader2, Film } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import ScanlineOverlay from "@/components/trailer/ScanlineOverlay";
+import MovieTrailer from "@/components/trailer/MovieTrailer";
+import CinematicIntro from "@/components/trailer/CinematicIntro";
+import TitleReveal from "@/components/trailer/TitleReveal";
+import StudioSection from "@/components/trailer/StudioSection";
+import TeamSection from "@/components/trailer/TeamSection";
+import ControversiaSection from "@/components/trailer/ControversiaSection";
+import FuentesSection from "@/components/trailer/FuentesSection";
+import ClosingSection from "@/components/trailer/ClosingSection";
+
+// phases: trailer -> intro -> title -> main
+export default function Home() {
+  const [phase, setPhase] = useState("trailer");
+  const [videoStatus, setVideoStatus] = useState("idle"); // idle | generating | ready | error
+  const [videoUrl, setVideoUrl] = useState(null);
+
+  const handleGenerateVideo = async () => {
+    setVideoStatus("generating");
+    try {
+      const result = await base44.integrations.Core.GenerateVideo({
+        prompt: "Cinematic documentary trailer, dark and dramatic. Fast cuts of press conference rooms with FIFA logos and microphones. A journalist's hand raised asking a question, officials interrupting. Headlines flying across screen reading 'NO ESPAÑOL' in red. Football stadium lights. A Brazilian player putting on headphones with a frustrated expression. Maps of Latin America glowing. News ticker text showing '194 MILLONES DE HISPANOHABLANTES'. Dark navy and gold color grading. Professional broadcast quality. Text overlay: VOCES DEL MUNDO — FIFA 2026.",
+        duration: 6,
+        aspect_ratio: "16:9",
+      });
+      setVideoUrl(result.url);
+      setVideoStatus("ready");
+    } catch (e) {
+      setVideoStatus("error");
+    }
+  };
+
+  const handleDownload = () => {
+    // Abrir en nueva pestaña — el usuario hace clic derecho → "Guardar como"
+    window.open(videoUrl, "_blank");
+  };
+
+  const handleTrailerDone = useCallback(() => setPhase("intro"), []);
+  const handleIntroComplete = useCallback(() => setPhase("title"), []);
+  const handleTitleComplete = useCallback(() => setPhase("main"), []);
+
+  return (
+    <div className="min-h-screen bg-black">
+      <ScanlineOverlay />
+
+      {/* Skip intro button — always visible */}
+      {phase !== "main" && (
+        <button
+          onClick={() => setPhase("main")}
+          className="fixed bottom-6 right-6 z-[60] font-mono text-[11px] text-white/40 border border-white/15 px-4 py-2 hover:text-white/80 hover:border-white/30 transition-colors backdrop-blur-sm"
+        >
+          SALTAR INTRO →
+        </button>
+      )}
+
+      <AnimatePresence mode="wait">
+        {phase === "trailer" && (
+          <MovieTrailer key="trailer" onComplete={handleTrailerDone} />
+        )}
+        {phase === "intro" && (
+          <CinematicIntro key="intro" onComplete={handleIntroComplete} />
+        )}
+        {phase === "title" && (
+          <TitleReveal key="title" onComplete={handleTitleComplete} />
+        )}
+      </AnimatePresence>
+
+      {phase === "main" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          {/* Hero */}
+          <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0">
+              <img
+                src="https://i.ytimg.com/vi/rht4Heu-7fg/maxresdefault.jpg"
+                alt=""
+                className="w-full h-full object-cover opacity-20"
+                style={{ filter: "contrast(1.2) saturate(0.4) blur(2px)" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-background/85 to-background" />
+            </div>
+
+            <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/2cf12a781_generated_image.png"
+                  alt="Voces del Mundo"
+                  className="w-48 md:w-64 mx-auto mb-6 opacity-90"
+                />
+                <h1 className="font-heading text-5xl md:text-8xl text-white tracking-[0.2em] mb-2">
+                  VOCES DEL MUNDO
+                </h1>
+                <p className="font-display italic text-base md:text-xl text-white/50 tracking-wider mb-6">
+                  Relaciones Internacionales en clave global
+                </p>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.5, delay: 0.8 }}
+                  className="h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent max-w-lg mx-auto mb-6"
+                />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className="inline-flex items-center gap-3 bg-secondary/50 border border-border/40 px-5 py-2.5 rounded-full mb-8"
+                >
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  <span className="font-mono text-xs text-white/70 tracking-[0.2em] uppercase">
+                    FIFA 2026 — Poder, Derecho e Identidad
+                  </span>
+                </motion.div>
+
+                {/* Download video button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8 }}
+                  className="flex flex-col items-center gap-3"
+                >
+                  {videoStatus === "idle" && (
+                    <button
+                      onClick={handleGenerateVideo}
+                      className="flex items-center gap-3 bg-primary text-primary-foreground px-6 py-3 font-heading tracking-[0.15em] text-sm hover:bg-primary/90 transition-colors"
+                    >
+                      <Film className="w-4 h-4" />
+                      DESCARGAR TRÁILER COMO VIDEO
+                    </button>
+                  )}
+                  {videoStatus === "generating" && (
+                    <div className="flex items-center gap-3 border border-primary/40 px-6 py-3 text-primary">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="font-mono text-xs tracking-wider">GENERANDO VIDEO... (~30s)</span>
+                    </div>
+                  )}
+                  {videoStatus === "ready" && (
+                    <div className="flex flex-col items-center gap-4">
+                      <video
+                        src={videoUrl}
+                        controls
+                        autoPlay
+                        className="w-full max-w-lg rounded border border-primary/30 shadow-2xl"
+                      />
+                      <button
+                        onClick={handleDownload}
+                        className="flex items-center gap-3 bg-primary text-primary-foreground px-8 py-4 font-heading tracking-[0.15em] text-base hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                      >
+                        <Download className="w-5 h-5" />
+                        GUARDAR VIDEO EN MI DISPOSITIVO (.MP4)
+                      </button>
+                      <p className="font-mono text-[10px] text-white/25 tracking-wider">
+                        El archivo se descargará directamente a tu carpeta de descargas
+                      </p>
+                    </div>
+                  )}
+                  {videoStatus === "error" && (
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="font-mono text-xs text-red-400">Error al generar. Intentá de nuevo.</p>
+                      <button
+                        onClick={() => setVideoStatus("idle")}
+                        className="font-mono text-xs text-white/40 underline"
+                      >
+                        Reintentar
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2 }}
+              className="absolute bottom-10 left-1/2 -translate-x-1/2"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1.5"
+              >
+                <div className="w-1 h-2 bg-white/40 rounded-full" />
+              </motion.div>
+            </motion.div>
+          </section>
+
+          <ControversiaSection />
+          <FuentesSection />
+          <StudioSection />
+          <TeamSection />
+          <ClosingSection />
+        </motion.div>
+      )}
+    </div>
+  );
+}
