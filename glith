@@ -1,0 +1,50 @@
+import { motion } from "framer-motion";
+
+export default function GlitchText({ text, className = "", delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.15, delay }}
+      className={`relative ${className}`}
+    >
+      {/* Main text */}
+      <span className="relative z-10">{text}</span>
+      
+      {/* Glitch layers */}
+      <motion.span
+        className="absolute inset-0 text-red-500/40"
+        animate={{
+          x: [0, -3, 2, -1, 0],
+          opacity: [0, 1, 0, 1, 0],
+        }}
+        transition={{
+          duration: 0.2,
+          delay: delay + 0.3,
+          repeat: 2,
+          repeatDelay: 1.5,
+        }}
+        aria-hidden
+      >
+        {text}
+      </motion.span>
+      <motion.span
+        className="absolute inset-0 text-blue-400/40"
+        animate={{
+          x: [0, 3, -2, 1, 0],
+          opacity: [0, 1, 0, 1, 0],
+        }}
+        transition={{
+          duration: 0.2,
+          delay: delay + 0.35,
+          repeat: 2,
+          repeatDelay: 1.5,
+        }}
+        aria-hidden
+      >
+        {text}
+      </motion.span>
+    </motion.div>
+  );
+}
