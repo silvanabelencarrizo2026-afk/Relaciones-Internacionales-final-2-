@@ -1,0 +1,95 @@
+import { useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+import ScanlineOverlay from "@/components/trailer/ScanlineOverlay";
+import MovieTrailer from "@/components/trailer/MovieTrailer";
+import CinematicIntro from "@/components/trailer/CinematicIntro";
+import TitleReveal from "@/components/trailer/TitleReveal";
+
+export default function Home() {
+  const [phase, setPhase] = useState("trailer");
+
+  const handleTrailerDone = useCallback(() => setPhase("intro"), []);
+  const handleIntroComplete = useCallback(() => setPhase("title"), []);
+  const handleTitleComplete = useCallback(() => setPhase("main"), []);
+
+  return (
+    <div className="min-h-screen bg-black">
+      <ScanlineOverlay />
+
+      {/* Se eliminó el botón SALTAR INTRO */}
+
+      <AnimatePresence mode="wait">
+        {phase === "trailer" && (
+          <MovieTrailer key="trailer" onComplete={handleTrailerDone} />
+        )}
+        {phase === "intro" && (
+          <CinematicIntro key="intro" onComplete={handleIntroComplete} />
+        )}
+        {phase === "title" && (
+          <TitleReveal key="title" onComplete={handleTitleComplete} />
+        )}
+      </AnimatePresence>
+
+      {phase === "main" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0">
+              <img
+                src="https://ytimg.com"
+                alt=""
+                className="w-full h-full object-cover opacity-20"
+                style={{ filter: "contrast(1.2) saturate(0.4) blur(2px)" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-background/85 to-background" />
+            </div>
+
+            <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                <img
+                  src="https://base44.com"
+                  alt="Voces del Mundo"
+                  className="w-48 md:w-64 mx-auto mb-6 opacity-90"
+                />
+                <h1 className="font-heading text-5xl md:text-8xl text-white tracking-[0.2em] mb-2">
+                  VOCES DEL MUNDO
+                </h1>
+                <p className="font-display italic text-base md:text-xl text-white/50 tracking-wider mb-6">
+                  Relaciones Internacionales en clave global
+                </p>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.5, delay: 0.8 }}
+                  className="h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent max-w-lg mx-auto mb-6"
+                />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className="inline-flex items-center gap-3 bg-secondary/50 border border-border/40 px-5 py-2.5 rounded-full mb-8"
+                >
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  <span className="font-mono text-xs text-white/70 tracking-[0.2em] uppercase">
+                    FIFA 2026 — Poder, Derecho e Identidad
+                  </span>
+                </motion.div>
+
+                {/* Se eliminó por completo el bloque del botón de descarga multimedia */}
+                
+              </motion.div>
+            </div>
+          </section>
+        </motion.div>
+      )}
+    </div>
+  );
+}
