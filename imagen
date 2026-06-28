@@ -1,0 +1,50 @@
+import { motion } from "framer-motion";
+
+const IMAGES = [
+  {
+    src: "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/ca29cffab_generated_image.png",
+    label: "Conferencia de prensa internacional",
+  },
+  {
+    src: "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/7f755d492_generated_image.png",
+    label: "Estadio — FIFA 2026",
+  },
+  {
+    src: "https://media.base44.com/images/public/6a372cd20716088ff61c3aeb/5900cc488_generated_image.png",
+    label: "Conexiones geopolíticas globales",
+  },
+];
+
+export default function ImageSequence() {
+  return (
+    <section className="relative py-20 bg-background overflow-hidden">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <span className="font-mono text-xs text-muted-foreground tracking-[0.3em] uppercase">
+            Contexto visual
+          </span>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {IMAGES.map((img, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.2, duration: 0.8 }}
+              className="group relative aspect-[4/3] rounded-lg overflow-hidden"
+            >
+              <img
+                src={img.src}
+                alt={img.label}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                style={{ filter: "contrast(1.1) saturate(0.8)" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+ 
