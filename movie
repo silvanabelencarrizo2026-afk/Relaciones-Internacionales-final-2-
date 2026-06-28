@@ -1,0 +1,388 @@
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+
+// Real thumbnails and images from the sources
+const NEWSPAPER_HEADLINES = [
+  {
+    img: "https://editorial.aristeguinoticias.com/wp-content/uploads/2026/06/prohiben-espanol-jugadores-mundial-2026-fifa-14062026.jpg",
+    source: "Aristegui Noticias",
+    date: "14 Jun 2026",
+    headline: "¿Prohíben hablar español a jugadores en el Mundial?",
+    sub: "La FIFA fue inflexible. Las críticas en redes sociales obligaron al organismo a reaccionar.",
+    rotation: -6,
+    x: -30,
+    y: -20,
+  },
+  {
+    img: "https://i.ytimg.com/vi/rht4Heu-7fg/maxresdefault.jpg",
+    source: "La Afición / Milenio",
+    date: "15 Jun 2026",
+    headline: "Humillación en plena conferencia: Vinícius, De Jong y Hakimi obligados a callar",
+    sub: "¿Por qué la FIFA bloquea uno de los idiomas más hablados del planeta?",
+    rotation: 4,
+    x: 20,
+    y: 10,
+  },
+  {
+    img: "https://i.ytimg.com/vi/xAlKcvplFUY/maxres2.jpg",
+    source: "TNT Sports México",
+    date: "14 Jun 2026",
+    headline: "¡LA RAZÓN POR LA QUE NO SE PUEDE HABLAR ESPAÑOL EN LAS RUEDAS DE PRENSA!",
+    sub: "FIFA tiene una postura muy clara respecto a los idiomas permitidos.",
+    rotation: -3,
+    x: -10,
+    y: 30,
+  },
+  {
+    img: "https://i.ytimg.com/vi/feHbpc1wC_4/maxres2.jpg",
+    source: "TNT Sports México",
+    date: "14 Jun 2026",
+    headline: "¡NO DEJARON HABLAR ESPAÑOL A FRENKIE DE JONG ANTES DE SU DEBUT EN EL MUNDIAL!",
+    sub: "Pese a dominar el idioma, sólo se permitieron preguntas en inglés y neerlandés.",
+    rotation: 7,
+    x: 15,
+    y: -15,
+  },
+  {
+    img: "https://i.ytimg.com/vi/A6nkxK-LtG4/maxres2.jpg",
+    source: "TyC Sports — 546K vistas",
+    date: "12 Jun 2026",
+    headline: "LA CURIOSA SITUACIÓN DE VINICIUS: \"EN ESPAÑOL POR FAVOR\"",
+    sub: "\"Creo que no puedo\" — Vinicius Junior. \"Sí sí puede\" — el periodista.",
+    rotation: -5,
+    x: -25,
+    y: 5,
+  },
+  {
+    img: "https://i.ytimg.com/vi/wovLuFYfXKs/maxresdefault.jpg",
+    source: "diegobonti — 390K vistas",
+    date: "15 Jun 2026",
+    headline: "LA FIFA SE RINDE ANTE EL MUNDO HISPANO ¡YA NO PROHIBIRÁ EL ESPAÑOL!",
+    sub: "Después de varios días de polémica, el organismo confirmó la habilitación del español.",
+    rotation: 3,
+    x: 10,
+    y: -25,
+  },
+];
+
+const QUOTES = [
+  { text: '"Nosotros no tenemos español en interpretación remota."', who: "— Oficial FIFA, Conferencia vs Brasil" },
+  { text: '"Creo que no puedo."', who: "— Vinícius Jr., Real Madrid" },
+  { text: '"Ok, ok, le entiendo..."', who: "— Achraf Hakimi, intentando responder" },
+  { text: '"No me importa."', who: "— Frenkie de Jong, antes de ser interrumpido" },
+  { text: '"Estamos en México. Aquí se habla español."', who: "— Redes sociales, viral" },
+  { text: '"194 millones de hispanohablantes en Norteamérica."', who: "— El idioma que la FIFA ignoró" },
+];
+
+const KEY_FACTS = [
+  "38.496 VISTAS",
+  "546.341 VISTAS",
+  "390.050 VISTAS",
+  "8 de 48 selecciones hablan español",
+  "13 partidos en México",
+  "FIFA SE RINDE",
+];
+
+export default function MovieTrailer({ onComplete }) {
+  const [phase, setPhase] = useState("black"); // black -> newspapers -> quotes -> final
+  const [visiblePapers, setVisiblePapers] = useState([]);
+  const [currentQuote, setCurrentQuote] = useState(0);
+  const [currentFact, setCurrentFact] = useState(0);
+  const [flashActive, setFlashActive] = useState(false);
+
+  // Phase transitions
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("newspapers"), 800);
+    return () => clearTimeout(t1);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "newspapers") return;
+    // Drop newspapers one by one
+    let i = 0;
+    const drop = () => {
+      if (i < NEWSPAPER_HEADLINES.length) {
+        setVisiblePapers((prev) => [...prev, i]);
+        // flash on each drop
+        setFlashActive(true);
+        setTimeout(() => setFlashActive(false), 80);
+        i++;
+        setTimeout(drop, 420);
+      } else {
+        setTimeout(() => setPhase("quotes"), 900);
+      }
+    };
+    drop();
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "quotes") return;
+    const interval = setInterval(() => {
+      setCurrentQuote((prev) => {
+        if (prev >= QUOTES.length - 1) {
+          clearInterval(interval);
+          setTimeout(() => setPhase("final"), 800);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 1100);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "final") return;
+    const interval = setInterval(() => {
+      setCurrentFact((prev) => (prev + 1) % KEY_FACTS.length);
+    }, 600);
+    const t = setTimeout(() => {
+      clearInterval(interval);
+      setTimeout(onComplete, 600);
+    }, 4000);
+    return () => { clearInterval(interval); clearTimeout(t); };
+  }, [phase, onComplete]);
+
+  return (
+    <div className="fixed inset-0 bg-black z-40 overflow-hidden">
+      {/* Flash effect on newspaper drop */}
+      <AnimatePresence>
+        {flashActive && (
+          <motion.div
+            key="flash"
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.08 }}
+            className="absolute inset-0 bg-white z-50 pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Noise grain overlay */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
+        }}
+      />
+
+      {/* Moving scanline */}
+      <motion.div
+        className="absolute left-0 right-0 h-[1px] bg-white/20 z-20 pointer-events-none"
+        animate={{ top: ["-2%", "102%"] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      />
+
+      {/* ===== NEWSPAPERS PHASE ===== */}
+      {phase === "newspapers" && (
+        <div className="absolute inset-0 flex items-center justify-center z-30">
+          {/* Dramatic background glow */}
+          <div className="absolute inset-0 bg-gradient-radial from-zinc-900/50 to-black" />
+
+          {/* Stacked newspapers */}
+          <div className="relative w-full h-full">
+            {NEWSPAPER_HEADLINES.map((paper, i) => (
+              <AnimatePresence key={i}>
+                {visiblePapers.includes(i) && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: -300,
+                      rotate: paper.rotation * 3,
+                      scale: 1.2,
+                      x: paper.x * 2,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: `calc(50vh - ${180 + i * 18}px + ${paper.y}px)`,
+                      rotate: paper.rotation,
+                      scale: 1,
+                      x: `calc(50vw - 160px + ${paper.x}px)`,
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                      mass: 0.8,
+                    }}
+                    className="absolute"
+                    style={{
+                      width: "320px",
+                      zIndex: 30 + i,
+                      filter: `brightness(${1 - i * 0.06}) contrast(1.1)`,
+                    }}
+                  >
+                    {/* Newspaper card */}
+                    <div
+                      className="bg-[#f5f0e8] rounded-sm shadow-2xl overflow-hidden border border-[#d4c9a8]"
+                      style={{
+                        boxShadow: "4px 6px 20px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.3)",
+                      }}
+                    >
+                      {/* Newspaper header */}
+                      <div className="bg-[#1a1a1a] px-3 py-1.5 flex items-center justify-between">
+                        <span className="font-heading text-[#f5f0e8] text-[10px] tracking-[0.2em] uppercase">
+                          {paper.source}
+                        </span>
+                        <span className="font-mono text-[#888] text-[9px]">{paper.date}</span>
+                      </div>
+
+                      {/* Image */}
+                      <div className="relative h-36 overflow-hidden">
+                        <img
+                          src={paper.img}
+                          alt=""
+                          className="w-full h-full object-cover"
+                          style={{ filter: "grayscale(30%) contrast(1.1)" }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#f5f0e8]/20" />
+                      </div>
+
+                      {/* Headline */}
+                      <div className="px-3 py-2 bg-[#f5f0e8]">
+                        <p className="font-heading text-[#111] text-sm leading-tight tracking-tight line-clamp-2">
+                          {paper.headline}
+                        </p>
+                        <p className="font-mono text-[#555] text-[9px] mt-1 leading-tight line-clamp-2">
+                          {paper.sub}
+                        </p>
+                        {/* Separator lines */}
+                        <div className="mt-2 space-y-[2px]">
+                          <div className="h-[1px] bg-[#1a1a1a]" />
+                          <div className="h-[2px] bg-[#1a1a1a]" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            ))}
+          </div>
+
+          {/* "BREAKING" stamp */}
+          <motion.div
+            initial={{ opacity: 0, scale: 2, rotate: -20 }}
+            animate={{ opacity: visiblePapers.length >= 3 ? 0.9 : 0, scale: 1, rotate: -15 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="absolute bottom-24 right-8 md:right-16 z-50 border-4 border-red-600 px-4 py-2"
+          >
+            <span className="font-heading text-red-600 text-2xl md:text-4xl tracking-[0.2em]">
+              BREAKING
+            </span>
+          </motion.div>
+        </div>
+      )}
+
+      {/* ===== QUOTES PHASE ===== */}
+      {phase === "quotes" && (
+        <div className="absolute inset-0 flex items-center justify-center z-30 bg-black">
+          {/* Static quote bg */}
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `url(https://i.ytimg.com/vi/A6nkxK-LtG4/maxres2.jpg)`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(8px) grayscale(100%)",
+            }}
+          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuote}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 1.02 }}
+              transition={{ duration: 0.25 }}
+              className="text-center px-8 max-w-3xl mx-auto relative z-10"
+            >
+              {/* Quote mark */}
+              <div className="font-heading text-6xl text-primary/30 leading-none mb-2">"</div>
+              <p className="font-heading text-2xl md:text-4xl text-white tracking-wide leading-tight mb-4">
+                {QUOTES[currentQuote].text}
+              </p>
+              <p className="font-mono text-xs text-primary tracking-[0.15em] uppercase">
+                {QUOTES[currentQuote].who}
+              </p>
+              {/* Progress dots */}
+              <div className="flex justify-center gap-2 mt-6">
+                {QUOTES.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-[2px] transition-all duration-300 ${
+                      i === currentQuote ? "w-6 bg-primary" : "w-2 bg-white/20"
+                    }`}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* ===== FINAL PHASE ===== */}
+      {phase === "final" && (
+        <div className="absolute inset-0 flex items-center justify-center z-30">
+          {/* All thumbnails as mosaic background */}
+          <div className="absolute inset-0 grid grid-cols-3 grid-rows-2 opacity-15">
+            {[
+              "https://i.ytimg.com/vi/xAlKcvplFUY/maxres2.jpg",
+              "https://i.ytimg.com/vi/A6nkxK-LtG4/maxres2.jpg",
+              "https://i.ytimg.com/vi/rht4Heu-7fg/maxresdefault.jpg",
+              "https://i.ytimg.com/vi/feHbpc1wC_4/maxres2.jpg",
+              "https://i.ytimg.com/vi/wovLuFYfXKs/maxresdefault.jpg",
+              "https://editorial.aristeguinoticias.com/wp-content/uploads/2026/06/prohiben-espanol-jugadores-mundial-2026-fifa-14062026.jpg",
+            ].map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt=""
+                className="w-full h-full object-cover"
+                style={{ filter: "grayscale(80%) contrast(1.2)" }}
+              />
+            ))}
+          </div>
+          <div className="absolute inset-0 bg-black/80" />
+
+          <div className="relative z-10 text-center px-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentFact}
+                initial={{ opacity: 0, scaleX: 0.8 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <p className="font-heading text-3xl md:text-6xl text-white tracking-[0.2em]">
+                  {KEY_FACTS[currentFact]}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 2 }}
+              className="h-[2px] bg-primary mt-4 max-w-xs mx-auto"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* REC + cam indicator always present */}
+      <div className="absolute top-6 left-6 z-40 flex items-center gap-2">
+        <motion.div
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 1, repeat: Infinity }}
+          className="w-2 h-2 bg-red-500 rounded-full"
+        />
+        <span className="font-mono text-[10px] text-red-400/80 tracking-wider">
+          REC • LIVE FEED
+        </span>
+      </div>
+      <div className="absolute top-6 right-6 z-40">
+        <span className="font-mono text-[10px] text-white/20 tracking-wider">
+          FIFA 2026 — COBERTURA ESPECIAL
+        </span>
+      </div>
+    </div>
+  );
+}
